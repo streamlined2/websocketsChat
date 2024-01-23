@@ -19,7 +19,7 @@ public class ServerController {
 	public OutgoingMessage handle(IncomingMessage message) {
 		try {
 			Thread.sleep(Duration.of(RESPONSE_DELAY_INTERVAL, ChronoUnit.SECONDS));
-			return new OutgoingMessage("Outgoing message:[" + message.getMessage() + "]");
+			return new OutgoingMessage("Response from server:[" + message.getMessage() + "]");
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new CommunicationException("handling interrupted", e);
