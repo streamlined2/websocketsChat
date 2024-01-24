@@ -3,7 +3,6 @@ package com.streamlined.websockets.client;
 import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -16,6 +15,8 @@ import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.streamlined.websockets.IncomingMessage;
 import com.streamlined.websockets.OutgoingMessage;
 import com.streamlined.websockets.server.CommunicationException;
@@ -39,7 +40,11 @@ public class Client implements Runnable, StompSessionHandler {
 	public void run() {
 
 		WebSocketStompClient client = new WebSocketStompClient(new StandardWebSocketClient());
-		client.setMessageConverter(new MappingJackson2MessageConverter());
+		var mapper = new ObjectMapper();
+		mapper.registerModule(new JavaTimeModule());
+		var converter = new MappingJackson2MessageConverter();
+		converter.setObjectMapper(mapper);
+		client.setMessageConverter(converter);
 
 		CompletableFuture<StompSession> response = client
 				.connectAsync(WebsocketsChatApplication.SERVER_HOST + WebsocketsChatApplication.SERVER_ENDPOINT, this);
@@ -62,9 +67,13 @@ public class Client implements Runnable, StompSessionHandler {
 	}
 
 	private void sendMessage(StompSession session, int iteration) {
-		session.send("%s%s".formatted(WebsocketsChatApplication.APP_PREFIX, WebsocketsChatApplication.REQUEST_ENDPOINT),
-				new IncomingMessage("Client #%d sent message #%d (%s)".formatted(id, iteration,
-						DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))));
+		session.send(getDestination(),
+				IncomingMessage.builder().author("Client #%d".formatted(id)).timeSent(LocalDateTime.now())
+						.topic("Conversation").message("Message #%d".formatted(iteration)).build());
+	}
+
+	private String getDestination() {
+		return "%s%s".formatted(WebsocketsChatApplication.APP_PREFIX, WebsocketsChatApplication.REQUEST_ENDPOINT);
 	}
 
 	@Override

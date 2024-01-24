@@ -1,7 +1,9 @@
 package com.streamlined.websockets.server;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -31,7 +33,8 @@ public class ServerController {
 
 	private OutgoingMessage processMessage(IncomingMessage message) throws InterruptedException {
 		Thread.sleep(Duration.of(RESPONSE_DELAY_INTERVAL, ChronoUnit.SECONDS));
-		return new OutgoingMessage("Response from server:[%s]".formatted(message.getMessage()));
+		return OutgoingMessage.builder().author(message.getAuthor()).timeSent(message.getTimeSent())
+				.timeReplied(LocalDateTime.now()).topic(message.getTopic()).message(message.getMessage()).build();
 	}
 
 }
