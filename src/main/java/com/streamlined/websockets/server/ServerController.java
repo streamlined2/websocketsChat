@@ -33,8 +33,8 @@ public class ServerController {
 
 	private OutgoingMessage processMessage(IncomingMessage message) throws InterruptedException {
 		Thread.sleep(Duration.of(RESPONSE_DELAY_INTERVAL, ChronoUnit.SECONDS));
-		return OutgoingMessage.builder().author(message.getAuthor()).timeSent(message.getTimeSent())
-				.timeReplied(LocalDateTime.now()).topic(message.getTopic()).message(message.getMessage()).build();
+		return OutgoingMessage.builder().author(message.author()).timeSent(message.timeSent())
+				.timeReplied(LocalDateTime.now()).topic(message.topic()).message(message.message()).build();
 	}
 
 }

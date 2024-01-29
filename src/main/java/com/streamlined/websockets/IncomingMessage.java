@@ -2,23 +2,11 @@ package com.streamlined.websockets;
 
 import java.time.LocalDateTime;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.With;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class IncomingMessage {
-	
-	private String author;
-	
-	private LocalDateTime timeSent;
-	
-	private String topic;
-
-	private String message;
-
+public record IncomingMessage(@With @NonNull String author, @With @NonNull LocalDateTime timeSent,
+		@With @NonNull String topic, @With @NonNull String message) {
 }

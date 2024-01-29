@@ -67,9 +67,9 @@ public class Client implements Runnable, StompSessionHandler {
 	}
 
 	private void sendMessage(StompSession session, int iteration) {
-		session.send(getDestination(),
-				IncomingMessage.builder().author("Client #%d".formatted(id)).timeSent(LocalDateTime.now())
-						.topic("Conversation").message("Message #%d".formatted(iteration)).build());
+		var message = IncomingMessage.builder().author("Client #%d".formatted(id)).timeSent(LocalDateTime.now())
+				.topic("Conversation").message("Message #%d".formatted(iteration)).build();
+		session.send(getDestination(), message);
 	}
 
 	private String getDestination() {
