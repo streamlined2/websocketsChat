@@ -8,5 +8,5 @@ import lombok.With;
 
 @Builder
 public record OutgoingMessage(@With @NonNull String author, @With @NonNull LocalDateTime timeSent,
-		@With @NonNull LocalDateTime timeReplied, String topic, @With @NonNull String message) {
+		@With @NonNull LocalDateTime timeReplied, @With @NonNull String topic, @With @NonNull String message) {
 }
